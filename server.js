@@ -7,8 +7,6 @@ const app = express();
 // db connect
 dbConnect();
 
-console.log(process.env);
-
 // server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, console.log(`Server is running`));

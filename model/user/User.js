@@ -1,64 +1,61 @@
 const mongoose = require("mongoose");
 
-//create schema object
-
+//create schema
 const userSchema = new mongoose.Schema(
   {
     firstName: {
-      required: [true, "First Name is required"],
-      typeof: "string",
+      required: [true, "First name is required"],
+      type: String,
     },
     lastName: {
-      required: [true, "Last Name is required"],
-      typeof: "string",
+      required: [true, "Last name is required"],
+      type: String,
     },
     profilePhoto: {
-      typeof: "string",
+      type: String,
       default:
-        "https://cdn.pixabay.com/photo/2014/04/02/10/25/man-303792_1280.png",
+        "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
     },
     email: {
-      typeof: "string",
+      type: String,
       required: [true, "Email is required"],
     },
     bio: {
-      typeof: "string",
+      type: String,
     },
     password: {
-      typeof: "string",
-      required: [true, "Password is required"],
+      type: String,
+      required: [true, "Hei buddy Password is required"],
     },
     postCount: {
-      typeof: "number",
+      type: Number,
       default: 0,
     },
     isBlocked: {
-      typeof: "boolean",
+      type: Boolean,
       default: false,
     },
     isAdmin: {
-      typeof: "boolean",
+      type: Boolean,
       default: false,
     },
     role: {
-      typeof: "string",
+      type: String,
       enum: ["Admin", "Guest", "Blogger"],
     },
-    isFollwing: {
-      typeof: "boolean",
+    isFollowing: {
+      type: Boolean,
       default: false,
     },
-    unFollwing: {
-      typeof: "boolean",
+    isUnFollowing: {
+      type: Boolean,
       default: false,
     },
-    isAccountVerified: {
-      typeof: "boolean",
-      default: false,
-    },
+    isAccountVerified: { type: Boolean, default: false },
     accountVerificationToken: String,
     accountVerificationTokenExpires: Date,
-    viewdBy: {
+
+    viewedBy: {
       type: [
         {
           type: mongoose.Schema.Types.ObjectId,
@@ -66,6 +63,7 @@ const userSchema = new mongoose.Schema(
         },
       ],
     },
+
     followers: {
       type: [
         {
@@ -74,7 +72,7 @@ const userSchema = new mongoose.Schema(
         },
       ],
     },
-    followimg: {
+    following: {
       type: [
         {
           type: mongoose.Schema.Types.ObjectId,
@@ -83,8 +81,9 @@ const userSchema = new mongoose.Schema(
       ],
     },
     passwordChangeAt: Date,
-    passwordResetToken: String,
-    passwordResetExpiresAt: Date,
+    passwordRessetToken: String,
+    passwordResetExpires: Date,
+
     active: {
       type: Boolean,
       default: false,
@@ -101,7 +100,7 @@ const userSchema = new mongoose.Schema(
   }
 );
 
-// compile schema into model
+//Compile schema into model
 const User = mongoose.model("User", userSchema);
 
 module.exports = User;

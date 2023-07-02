@@ -14,12 +14,6 @@ app.use(express.json());
 //register routes
 app.post("/api/users/register", userRegisterCtrl);
 
-//login routes
-app.post("/api/users/login", (req, res) => {
-  //buisness logic
-  res.json({ users: "user login" });
-});
-
 //fetch all users
 app.get("/api/users", (req, res) => {
   //buisness logic

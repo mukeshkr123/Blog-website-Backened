@@ -80,9 +80,26 @@ const deleteUsersCtrl = expressAsyncHandler(async (req, res) => {
   }
 });
 
+// ----------------------------------------------------------------
+// Users fetch single user
+//----------------------------------------------------------------
+
+const fetchUserCtrl = expressAsyncHandler(async (req, res) => {
+  const { id } = req.params;
+  // check if user id is valid
+  validateMongoId(id);
+  try {
+    const users = await User.findById(id);
+    res.json(users);
+  } catch (error) {
+    res.json(error);
+  }
+});
+
 module.exports = {
   userRegisterCtrl,
   loginUserCtrl,
   fetchUsersCtrl,
   deleteUsersCtrl,
+  fetchUserCtrl,
 };

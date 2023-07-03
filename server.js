@@ -4,7 +4,7 @@ dotenv.config();
 const dbConnect = require("./config/db/dbConnect");
 const { userRegisterCtrl } = require("./controllers/users/userCtrl");
 const userRoutes = require("./routes/users/userRoutes");
-const errorHandler = require("./middleware/error/errorHandler");
+const { errorHandler, notFound } = require("./middleware/error/errorHandler");
 const app = express();
 
 // db connect
@@ -17,6 +17,7 @@ app.use(express.json());
 app.use("/", userRoutes);
 
 //Error Handler --> below all routes
+app.use(notFound); // notfound
 app.use(errorHandler);
 
 // server

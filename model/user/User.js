@@ -109,6 +109,11 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
+// unhash password
+userSchema.methods.isPasswordMatch = async function (enterdPassword) {
+  return await bcrypt.compare(enterdPassword, this.password);
+};
+
 //Compiluse schema into model
 const User = mongoose.model("User", userSchema);
 

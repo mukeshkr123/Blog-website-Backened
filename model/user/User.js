@@ -101,8 +101,11 @@ const userSchema = new mongoose.Schema(
   }
 );
 
-//hashedPassword
+//Hash password
 userSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) {
+    next();
+  } /// for resaving when password is changed
   //hash password
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
@@ -110,7 +113,7 @@ userSchema.pre("save", async function (next) {
 });
 
 // unhash password
-userSchema.methods.isPasswordMatch = async function (enterdPassword) {
+userSchema.methods.isPasswordMatched = async function (enterdPassword) {
   return await bcrypt.compare(enterdPassword, this.password);
 };
 

@@ -5,14 +5,17 @@ const expressAsyncHandler = require("express-async-handler");
 const User = require("../../model/user/User");
 const generateToken = require("../../config/token/generateToken");
 const validateMongoId = require("../../utils/validateMongodbID");
+const { response } = require("express");
 
-/// ----------------------------------------------------------------
-// REGISTER
-//----------------------------------------------------------------
+//-------------------------------------
+//Register
+//-------------------------------------
+
 const userRegisterCtrl = expressAsyncHandler(async (req, res) => {
-  // check if user is already registered
-  const userExist = await User.findOne({ email: req?.body?.email });
-  if (userExist) throw new Error("User already registered");
+  //Check if user Exist
+  const userExists = await User.findOne({ email: req?.body?.email });
+
+  if (userExists) throw new Error("User already exists");
   try {
     //Register user
     const user = await User.create({
@@ -27,34 +30,34 @@ const userRegisterCtrl = expressAsyncHandler(async (req, res) => {
   }
 });
 
-//----------------------------------------------------------------
-// Login User
-//----------------------------------------------------------------
+//-------------------------------
+//Login user
+//-------------------------------
+
 const loginUserCtrl = expressAsyncHandler(async (req, res) => {
   const { email, password } = req.body;
-  // check if user is already existing
-  const userFound = await User.findOne({ email: req.body.email });
-  // check if password is match
-  if (userFound && (await userFound.isPasswordMatch(password))) {
+  //check if user exists
+  const userFound = await User.findOne({ email });
+  //Check if password is match
+  if (userFound && (await userFound.isPasswordMatched(password))) {
     res.json({
-      _id: userFound?.id,
+      _id: userFound?._id,
       firstName: userFound?.firstName,
       lastName: userFound?.lastName,
       email: userFound?.email,
       profilePhoto: userFound?.profilePhoto,
       isAdmin: userFound?.isAdmin,
-      token: generateToken(userFound.id),
+      token: generateToken(userFound?._id),
     });
   } else {
     res.status(401);
-    throw new Error("Invalid login creditionals");
+    throw new Error("Invalid Login Credentials");
   }
 });
 
-// ----------------------------------------------------------------
-// Users fetch all users
-//----------------------------------------------------------------
-
+//------------------------------
+//Users
+//-------------------------------
 const fetchUsersCtrl = expressAsyncHandler(async (req, res) => {
   try {
     const users = await User.find({});
@@ -64,13 +67,12 @@ const fetchUsersCtrl = expressAsyncHandler(async (req, res) => {
   }
 });
 
-// ----------------------------------------------------------------
-// delete user
-//----------------------------------------------------------------
-
+//------------------------------
+//Delete user
+//------------------------------
 const deleteUsersCtrl = expressAsyncHandler(async (req, res) => {
   const { id } = req.params;
-  // check if user id is valid
+  //check if user id is valid
   validateMongoId(id);
   try {
     const deletedUser = await User.findByIdAndDelete(id);
@@ -80,27 +82,26 @@ const deleteUsersCtrl = expressAsyncHandler(async (req, res) => {
   }
 });
 
-// ----------------------------------------------------------------
-// Users fetch single user
-//----------------------------------------------------------------
-
-const fetchUserCtrl = expressAsyncHandler(async (req, res) => {
+//----------------
+//user details
+//----------------
+const fetchUserDetailsCtrl = expressAsyncHandler(async (req, res) => {
   const { id } = req.params;
-  // check if user id is valid
+  //check if user id is valid
   validateMongoId(id);
   try {
-    const users = await User.findById(id);
-    res.json(users);
+    const user = await User.findById(id);
+    res.json(user);
   } catch (error) {
     res.json(error);
   }
 });
 
-// ----------------------------------------------------------------
-// fetch User profile
-//----------------------------------------------------------------
+//------------------------------
+//User profile
+//------------------------------
 
-const userProfile = expressAsyncHandler(async (req, res) => {
+const userProfileCtrl = expressAsyncHandler(async (req, res) => {
   const { id } = req.params;
   validateMongoId(id);
   try {
@@ -111,12 +112,11 @@ const userProfile = expressAsyncHandler(async (req, res) => {
   }
 });
 
-// ----------------------------------------------------------------
-// update profile
-//----------------------------------------------------------------
-
-const updateProfile = expressAsyncHandler(async (req, res) => {
-  const { _id } = req.user;
+//------------------------------
+//Update profile
+//------------------------------
+const updateUserCtrl = expressAsyncHandler(async (req, res) => {
+  const { _id } = req?.user;
   validateMongoId(_id);
   const user = await User.findByIdAndUpdate(
     _id,
@@ -134,12 +134,33 @@ const updateProfile = expressAsyncHandler(async (req, res) => {
   res.json(user);
 });
 
+//------------------------------
+//Update password
+//------------------------------
+
+const updateUserPasswordCtrl = expressAsyncHandler(async (req, res) => {
+  //destructure the login user
+  const { _id } = req.user;
+  const { password } = req.body;
+  validateMongoId(_id);
+  //Find the user by _id
+  const user = await User.findById(_id);
+
+  if (password) {
+    user.password = password;
+    const updatedUser = await user.save();
+    res.json(updatedUser);
+  } else {
+    res.json(user);
+  }
+});
 module.exports = {
   userRegisterCtrl,
   loginUserCtrl,
   fetchUsersCtrl,
   deleteUsersCtrl,
-  fetchUserCtrl,
-  userProfile,
-  updateProfile,
+  fetchUserDetailsCtrl,
+  userProfileCtrl,
+  updateUserCtrl,
+  updateUserPasswordCtrl,
 };

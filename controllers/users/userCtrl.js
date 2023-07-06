@@ -154,6 +154,28 @@ const updateUserPasswordCtrl = expressAsyncHandler(async (req, res) => {
     res.json(user);
   }
 });
+
+//------------------------------
+//following
+//------------------------------
+
+const followingUserCtrl = expressAsyncHandler(async (req, res) => {
+  const { followId } = req.body;
+  const loginUserId = req.user.id;
+
+  //1. find the user you want to follow and upadte it's followers field ,
+  await User.findByIdAndUpdate(followId, {
+    $push: { followers: loginUserId },
+  });
+
+  //2. update the login user following field
+  await User.findByIdAndUpdate(loginUserId, {
+    $push: { following: followId },
+  });
+
+  res.json("You have successfully followed this user");
+});
+
 module.exports = {
   userRegisterCtrl,
   loginUserCtrl,
@@ -163,4 +185,5 @@ module.exports = {
   userProfileCtrl,
   updateUserCtrl,
   updateUserPasswordCtrl,
+  followingUserCtrl,
 };

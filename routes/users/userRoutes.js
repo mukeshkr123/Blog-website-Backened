@@ -10,6 +10,7 @@ const {
   updateUserPasswordCtrl,
 } = require("../../controllers/users/userCtrl");
 const authMiddleware = require("../../middleware/auth/authMiddleware");
+
 const userRoutes = express.Router();
 
 userRoutes.post("/register", userRegisterCtrl);

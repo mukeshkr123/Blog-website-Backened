@@ -15,6 +15,7 @@ const authMiddleware = expressAsyncHandler(async (req, res, next) => {
         const user = await User.findById(decoded?.id).select("-password");
         //attach the user to the request object
         req.user = user;
+        console.log(req.user);
         next();
       } else {
         throw new "There is no token attached to the header"();

@@ -5,7 +5,6 @@ const expressAsyncHandler = require("express-async-handler");
 const User = require("../../model/user/User");
 const generateToken = require("../../config/token/generateToken");
 const validateMongoId = require("../../utils/validateMongodbID");
-const { response } = require("express");
 
 //-------------------------------------
 //Register
@@ -117,6 +116,7 @@ const userProfileCtrl = expressAsyncHandler(async (req, res) => {
 //------------------------------
 const updateUserCtrl = expressAsyncHandler(async (req, res) => {
   const { _id } = req?.user;
+  console.log(req.user);
   validateMongoId(_id);
   const user = await User.findByIdAndUpdate(
     _id,

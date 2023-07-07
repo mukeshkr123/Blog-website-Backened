@@ -5,6 +5,7 @@ const expressAsyncHandler = require("express-async-handler");
 const User = require("../../model/user/User");
 const generateToken = require("../../config/token/generateToken");
 const validateMongoId = require("../../utils/validateMongodbID");
+const { response } = require("express");
 
 //-------------------------------------
 //Register
@@ -233,6 +234,21 @@ const unfollowUserId = expressAsyncHandler(async (req, res) => {
 //Block
 //----------------------------------------------------------------
 
+const blockUserCtrl = expressAsyncHandler(async (req, res) => {
+  const { id } = req.params;
+  validateMongoId(id);
+  const user = await User.findByIdAndUpdate(
+    id,
+    {
+      isBlocked: true,
+    },
+    {
+      new: true,
+    }
+  );
+  res.json(user);
+});
+
 module.exports = {
   userRegisterCtrl,
   loginUserCtrl,
@@ -244,4 +260,5 @@ module.exports = {
   updateUserPasswordCtrl,
   followingUserCtrl,
   unfollowUserId,
+  blockUserCtrl,
 };

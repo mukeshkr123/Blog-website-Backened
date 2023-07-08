@@ -5,6 +5,7 @@ const expressAsyncHandler = require("express-async-handler");
 const User = require("../../model/user/User");
 const generateToken = require("../../config/token/generateToken");
 const sgMail = require("@sendgrid/mail");
+const crypto = require("crypto");
 
 const validateMongoId = require("../../utils/validateMongodbID");
 
@@ -311,6 +312,29 @@ const generateVerificationTokenCtrl = expressAsyncHandler(async (req, res) => {
   }
 });
 
+///--------------------------------
+/// Account verification
+////----------------------------------------------------
+
+const accountVerificationCtrl = expressAsyncHandler(async (req, res) => {
+  const { token } = req.body;
+  const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+
+  //find the user by token
+  const userFound = await User.findOne({
+    accountVerificationToken: hashedToken,
+    accountVerificationTokenExpires: { $gt: new Date() },
+  });
+
+  if (!userFound) throw new Error("Token expire Try again later");
+  //update the properties to true
+  userFound.isAccountVerified = true;
+  userFound.accountVerificationToken = undefined;
+  userFound.accountVerificationTokenExpires = undefined;
+  await userFound.save();
+  res.json(userFound);
+});
+
 module.exports = {
   userRegisterCtrl,
   loginUserCtrl,
@@ -325,4 +349,5 @@ module.exports = {
   blockUserCtrl,
   unBlockUserCtrl,
   generateVerificationTokenCtrl,
+  accountVerificationCtrl,
 };

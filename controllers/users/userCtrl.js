@@ -274,23 +274,40 @@ const unBlockUserCtrl = expressAsyncHandler(async (req, res) => {
 });
 
 ///--------------------------------
-//send email notification account verification
+//generate email verification token
 ///--------------------------------
-
 const generateVerificationTokenCtrl = expressAsyncHandler(async (req, res) => {
+  const loginUserid = req.user.id;
+
   try {
-    //build your message
+    // Find the user
+    const user = await User.findById(loginUserid);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Generate verification token
+    const verificationToken = await user.createAccountVerificationToken();
+    // save the user
+    await user.save();
+
+    // Build your message
+
+    const resetURL = `if you are requested to verify your account , verify now with 10 minutes , otherwise ignore the <a href="http://localhost:3000/verify-account/${verificationToken} >Click here </a>`;
+
     const msg = {
       to: "mukeshmehta2041@gmail.com",
       from: "mkmehta2041@gmail.com",
-      subject: "My first Node js email sending",
-      text: "Hey check me out for this email",
+      subject: "My first Node.js email sending",
+      text: resetURL,
     };
 
+    // Send the email
     await sgMail.send(msg);
-    res.json("Email sent");
+
+    res.json({ message: "Email sent", verificationToken, resetURL });
   } catch (error) {
-    res.json(error);
+    res.status(500).json({ message: "Error sending email", error });
   }
 });
 

@@ -335,6 +335,30 @@ const accountVerificationCtrl = expressAsyncHandler(async (req, res) => {
   res.json(userFound);
 });
 
+//----------------------------------------------------------------
+// Generate a Forgot Password Token
+//----------------------------------------------------------------
+
+const forgetPasswordTokenCtrl = expressAsyncHandler(async (req, res) => {
+  // find the user by emai;
+  const { email } = req.body;
+
+  const userFound = await User.findOne({ email });
+  if (!userFound) throw new Error("User not found");
+
+  try {
+    const token = await userFound.createPasswordResetToken();
+    await userFound.save();
+    res.json(userFound);
+  } catch (error) {
+    res.json(error);
+  }
+});
+
+//----------------------------------------------------------------
+// Take the token, the user by token
+//----------------------------------------------------------------
+
 module.exports = {
   userRegisterCtrl,
   loginUserCtrl,
@@ -350,4 +374,5 @@ module.exports = {
   unBlockUserCtrl,
   generateVerificationTokenCtrl,
   accountVerificationCtrl,
+  forgetPasswordTokenCtrl,
 };

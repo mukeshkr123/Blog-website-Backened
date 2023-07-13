@@ -363,15 +363,39 @@ const forgetPasswordTokenCtrl = expressAsyncHandler(async (req, res) => {
 
     // Send the email
     await sgMail.send(msg);
-    res.json(resetURL);
+    res.json({
+      msg: `A verification message is successfully sent to ${userFound.email} . Reset now within 10 min ${resetURL}`,
+    });
   } catch (error) {
     res.json(error);
   }
 });
 
 //----------------------------------------------------------------
-// Take the token, the user by token
+// Password reset
 //----------------------------------------------------------------
+
+const passwordResetCtrl = expressAsyncHandler(async (req, res) => {
+  const { token, password } = req.body;
+  const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+
+  //find the user by token
+  const userFound = await User.findOne({
+    passwordResetToken: hashedToken,
+    passwordResetExpires: { $gt: new Date() },
+  });
+
+  if (!userFound) throw new Error("Token Expires , try again later");
+
+  // update /change password
+  userFound.password = password;
+  userFound.passwordResetToken = undefined;
+  userFound.passwordResetExpires = undefined;
+
+  await userFound.save();
+
+  res.json(userFound);
+});
 
 module.exports = {
   userRegisterCtrl,
@@ -389,4 +413,5 @@ module.exports = {
   generateVerificationTokenCtrl,
   accountVerificationCtrl,
   forgetPasswordTokenCtrl,
+  passwordResetCtrl,
 };

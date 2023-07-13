@@ -15,6 +15,7 @@ const {
   generateVerificationTokenCtrl,
   accountVerificationCtrl,
   forgetPasswordTokenCtrl,
+  passwordResetCtrl,
 } = require("../../controllers/users/userCtrl");
 const authMiddleware = require("../../middleware/auth/authMiddleware");
 
@@ -34,6 +35,7 @@ userRoutes.post(
   generateVerificationTokenCtrl
 );
 userRoutes.post("/verify-account", authMiddleware, accountVerificationCtrl);
+userRoutes.put("/reset-password", passwordResetCtrl);
 userRoutes.put("/unfollow", authMiddleware, unfollowUserId);
 userRoutes.put("/block-user/:id", authMiddleware, blockUserCtrl);
 userRoutes.put("/unblock-user/:id", authMiddleware, unBlockUserCtrl);

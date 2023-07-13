@@ -279,7 +279,7 @@ const unBlockUserCtrl = expressAsyncHandler(async (req, res) => {
 ///--------------------------------
 const generateVerificationTokenCtrl = expressAsyncHandler(async (req, res) => {
   const loginUserid = req.user.id;
-
+  console.log(loginUserid);
   try {
     // Find the user
     const user = await User.findById(loginUserid);
@@ -349,7 +349,21 @@ const forgetPasswordTokenCtrl = expressAsyncHandler(async (req, res) => {
   try {
     const token = await userFound.createPasswordResetToken();
     await userFound.save();
-    res.json(userFound);
+
+    // Build your message
+
+    const resetURL = `if you are requested to reset your account , reset now with 10 minutes , otherwise ignore the <a href="http://localhost:3000/reset-password/${token} >Click here to reset Password</a>`;
+
+    const msg = {
+      to: email,
+      from: "mkmehta2041@gmail.com",
+      subject: "Reset Password",
+      text: resetURL,
+    };
+
+    // Send the email
+    await sgMail.send(msg);
+    res.json(resetURL);
   } catch (error) {
     res.json(error);
   }

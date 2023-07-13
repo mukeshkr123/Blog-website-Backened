@@ -139,6 +139,7 @@ userSchema.methods.createPasswordResetToken = function () {
     .update(resetToken)
     .digest("hex");
   this.passwordResetExpires = Date.now() + 30 * 60 * 60 * 1000;
+  return resetToken;
 };
 
 //Compiluse schema into model

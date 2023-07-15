@@ -21,6 +21,7 @@ const {
 const authMiddleware = require("../../middleware/auth/authMiddleware");
 const {
   profilePhotoUpload,
+  profilePhotoResize,
 } = require("../../middleware/upload/profilePhotoUpload");
 
 const userRoutes = express.Router();
@@ -43,6 +44,7 @@ userRoutes.put(
   "/profilephoto-upload",
   profilePhotoUpload.single("image"),
   authMiddleware,
+  profilePhotoResize,
   profilePhotoUploadCtrl
 );
 userRoutes.put("/reset-password", passwordResetCtrl);

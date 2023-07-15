@@ -404,14 +404,21 @@ const passwordResetCtrl = expressAsyncHandler(async (req, res) => {
 
 const profilePhotoUploadCtrl = expressAsyncHandler(async (req, res) => {
   try {
+    //find the login user
+    const { _id } = req.user;
     // 1. Get the path to the image
     const localPath = `public/images/profile/${req.file.filename}`;
 
     // 2. Upload to Cloudinary
     const imgUpload = await cloudinaryUploadImg(localPath);
-    console.log(imgUpload);
-
-    res.json(localPath);
+    const foundUser = await User.findByIdAndUpdate(
+      _id,
+      {
+        profilePhoto: imgUpload?.url,
+      },
+      { new: true }
+    );
+    res.json(foundUser);
   } catch (error) {
     console.error("Error uploading image:", error);
     res.status(500).json({ message: "Failed to upload image" });

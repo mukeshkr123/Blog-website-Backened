@@ -10,6 +10,7 @@ const crypto = require("crypto");
 const validateMongoId = require("../../utils/validateMongodbID");
 
 const { response } = require("express");
+const cloudinaryUploadImg = require("../../utils/cloudinary");
 
 sgMail.setApiKey(process.env.SEND_GRID_API_KEY);
 
@@ -402,8 +403,19 @@ const passwordResetCtrl = expressAsyncHandler(async (req, res) => {
 //----------------------------------------------------------------
 
 const profilePhotoUploadCtrl = expressAsyncHandler(async (req, res) => {
-  console.log(req.file);
-  res.json("upload");
+  try {
+    // 1. Get the path to the image
+    const localPath = `public/images/profile/${req.file.filename}`;
+
+    // 2. Upload to Cloudinary
+    const imgUpload = await cloudinaryUploadImg(localPath);
+    console.log(imgUpload);
+
+    res.json(localPath);
+  } catch (error) {
+    console.error("Error uploading image:", error);
+    res.status(500).json({ message: "Failed to upload image" });
+  }
 });
 
 module.exports = {

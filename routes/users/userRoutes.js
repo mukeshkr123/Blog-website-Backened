@@ -16,8 +16,12 @@ const {
   accountVerificationCtrl,
   forgetPasswordTokenCtrl,
   passwordResetCtrl,
+  profilePhotoUploadCtrl,
 } = require("../../controllers/users/userCtrl");
 const authMiddleware = require("../../middleware/auth/authMiddleware");
+const {
+  profilePhotoUpload,
+} = require("../../middleware/upload/profilePhotoUpload");
 
 const userRoutes = express.Router();
 
@@ -35,6 +39,12 @@ userRoutes.post(
   generateVerificationTokenCtrl
 );
 userRoutes.post("/verify-account", authMiddleware, accountVerificationCtrl);
+userRoutes.put(
+  "/profilephoto-upload",
+  profilePhotoUpload.single("image"),
+  authMiddleware,
+  profilePhotoUploadCtrl
+);
 userRoutes.put("/reset-password", passwordResetCtrl);
 userRoutes.put("/unfollow", authMiddleware, unfollowUserId);
 userRoutes.put("/block-user/:id", authMiddleware, blockUserCtrl);

@@ -43,7 +43,7 @@ const createPostCtrl = expressAsyncHandler(async (req, res) => {
 });
 
 // fetch all posts
-const fetchAllPosts = expressAsyncHandler(async (req, res) => {
+const fetchAllPostsCtrl = expressAsyncHandler(async (req, res) => {
   try {
     const posts = await Post.find({}).populate("user");
     res.json(posts);
@@ -52,4 +52,16 @@ const fetchAllPosts = expressAsyncHandler(async (req, res) => {
   }
 });
 
-module.exports = { createPostCtrl, fetchAllPosts };
+//fetch single posts
+const fetchPostCtrl = expressAsyncHandler(async (req, res) => {
+  const { id } = req.params;
+  validateMongoId(id);
+  try {
+    const post = await Post.findById(id);
+    res.json(post);
+  } catch (error) {
+    res.json(error);
+  }
+});
+
+module.exports = { createPostCtrl, fetchPostCtrl, fetchAllPostsCtrl };

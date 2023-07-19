@@ -7,6 +7,7 @@ const { userRegisterCtrl } = require("./controllers/users/userCtrl");
 const userRoutes = require("./routes/users/userRoutes");
 const { errorHandler, notFound } = require("./middleware/error/errorHandler");
 const postRoute = require("./routes/post/postRoutes");
+const categoryRoute = require("./routes/category/categoryRoutes");
 const app = express();
 
 // db connect
@@ -21,6 +22,8 @@ app.use(cors());
 app.use("/api/users", userRoutes);
 //Post Route
 app.use("/api/posts", postRoute);
+// category Route
+app.use("/api/category", categoryRoute);
 
 //Error Handler --> below all routes
 app.use(notFound); // notfound

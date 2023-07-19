@@ -25,6 +25,6 @@ postRoute.post(
 postRoute.get("/", fetchAllPostsCtrl); // fetch all posts
 postRoute.get("/:id", fetchPostCtrl); // fetch a posts
 postRoute.delete("/:id", deletePostCtrl); // fetch a posts
-postRoute.put("/:id", updatePostCtrl); // update  a posts
+postRoute.put("/:id", updatePostCtrl); // update a post
 
 module.exports = postRoute;

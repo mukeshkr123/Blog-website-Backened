@@ -72,7 +72,19 @@ const fetchPostCtrl = expressAsyncHandler(async (req, res) => {
   }
 });
 
-// update the post
+//delete a post
+const deletePostCtrl = expressAsyncHandler(async (req, res) => {
+  const { id } = req.params;
+  validateMongoId(id);
+  try {
+    await Post.findByIdAndDelete(id);
+    res.json("Deleted successfully");
+  } catch (error) {
+    res.json(error);
+  }
+});
+
+// update the posts
 const updatePostCtrl = expressAsyncHandler(async (req, res) => {
   const { id } = req.params;
   validateMongoId(id);
@@ -82,22 +94,11 @@ const updatePostCtrl = expressAsyncHandler(async (req, res) => {
       {
         ...req.body,
       },
-      { new: true }
+      {
+        new: true,
+      }
     );
-
     res.json(post);
-  } catch (error) {
-    res.json(error);
-  }
-});
-
-//delete a post
-const deletePostCtrl = expressAsyncHandler(async (req, res) => {
-  const { id } = req.params;
-  validateMongoId(id);
-  try {
-    await Post.findByIdAndDelete(id);
-    res.json("Deleted successfully");
   } catch (error) {
     res.json(error);
   }

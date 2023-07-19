@@ -40,7 +40,7 @@ const fetchCategoryCtrl = expressAsyncHandler(async (req, res) => {
 });
 
 //update category
-const updateCategory = expressAsyncHandler(async (req, res) => {
+const updateCategoryCtrl = expressAsyncHandler(async (req, res) => {
   const { id } = req.params;
   validateMongoId(id);
   try {
@@ -59,9 +59,22 @@ const updateCategory = expressAsyncHandler(async (req, res) => {
   }
 });
 
+// delete  a category
+const deleteCategoryCtrl = expressAsyncHandler(async (req, res) => {
+  const { id } = req.params;
+  validateMongoId(id);
+  try {
+    const category = await Category.findByIdAndDelete(id);
+    res.json(category);
+  } catch (error) {
+    res.json(error);
+  }
+});
+
 module.exports = {
   CreateCategoryCtrl,
   fetchCategoriesCtrl,
   fetchCategoryCtrl,
-  updateCategory,
+  updateCategoryCtrl,
+  deleteCategoryCtrl,
 };

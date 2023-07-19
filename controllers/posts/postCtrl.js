@@ -4,6 +4,7 @@ const Post = require("../../model/post/Post");
 const validateMongoId = require("../../utils/validateMongodbID");
 const User = require("../../model/user/User");
 const cloudinaryUploadImg = require("../../utils/cloudinary");
+const fs = require("fs");
 
 // Create post
 const createPostCtrl = expressAsyncHandler(async (req, res) => {
@@ -34,6 +35,8 @@ const createPostCtrl = expressAsyncHandler(async (req, res) => {
       user: _id,
     });
     res.json(post);
+    //Removed uploaded image after uploading
+    fs.unlinkSync(localPath);
   } catch (error) {
     res.json(error);
   }

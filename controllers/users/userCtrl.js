@@ -6,11 +6,10 @@ const User = require("../../model/user/User");
 const generateToken = require("../../config/token/generateToken");
 const sgMail = require("@sendgrid/mail");
 const crypto = require("crypto");
-
 const validateMongoId = require("../../utils/validateMongodbID");
-
 const { response } = require("express");
 const cloudinaryUploadImg = require("../../utils/cloudinary");
+const fs = require("fs");
 
 sgMail.setApiKey(process.env.SEND_GRID_API_KEY);
 
@@ -418,7 +417,9 @@ const profilePhotoUploadCtrl = expressAsyncHandler(async (req, res) => {
       },
       { new: true }
     );
-    res.json(foundUser);
+    res.json(imgUpload);
+    // remove the profile photo after upload completes
+    fs.unlinkSync(localPath);
   } catch (error) {
     console.error("Error uploading image:", error);
     res.status(500).json({ message: "Failed to upload image" });

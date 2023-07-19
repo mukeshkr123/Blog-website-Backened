@@ -42,4 +42,14 @@ const createPostCtrl = expressAsyncHandler(async (req, res) => {
   }
 });
 
-module.exports = { createPostCtrl };
+// fetch all posts
+const fetchAllPosts = expressAsyncHandler(async (req, res) => {
+  try {
+    const posts = await Post.find({});
+    res.json(posts);
+  } catch (error) {
+    res.json(error);
+  }
+});
+
+module.exports = { createPostCtrl, fetchAllPosts };

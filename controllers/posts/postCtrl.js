@@ -72,8 +72,24 @@ const fetchPostCtrl = expressAsyncHandler(async (req, res) => {
   }
 });
 
+// update the post
+const updatePostCtrl = expressAsyncHandler(async (req, res) => {});
+//delete a post
+const deletePostCtrl = expressAsyncHandler(async (req, res) => {
+  const { id } = req.params;
+  validateMongoId(id);
+  try {
+    await Post.findByIdAndDelete(id);
+    res.json("Deleted successfully");
+  } catch (error) {
+    res.json(error);
+  }
+});
+
 module.exports = {
   createPostCtrl,
   fetchPostCtrl,
   fetchAllPostsCtrl,
+  deletePostCtrl,
+  updatePostCtrl,
 };

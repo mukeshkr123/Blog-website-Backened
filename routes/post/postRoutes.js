@@ -3,6 +3,8 @@ const {
   createPostCtrl,
   fetchAllPostsCtrl,
   fetchPostCtrl,
+  deletePostCtrl,
+  updatePostCtrl,
 } = require("../../controllers/posts/postCtrl");
 const authMiddleware = require("../../middleware/auth/authMiddleware");
 const {
@@ -21,6 +23,8 @@ postRoute.post(
 );
 
 postRoute.get("/", fetchAllPostsCtrl); // fetch all posts
-postRoute.get("/:id", fetchPostCtrl); // fetch all posts
+postRoute.get("/:id", fetchPostCtrl); // fetch a posts
+postRoute.delete("/:id", deletePostCtrl); // fetch a posts
+postRoute.put("/:id", updatePostCtrl); // update  a posts
 
 module.exports = postRoute;

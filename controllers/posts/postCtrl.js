@@ -73,7 +73,24 @@ const fetchPostCtrl = expressAsyncHandler(async (req, res) => {
 });
 
 // update the post
-const updatePostCtrl = expressAsyncHandler(async (req, res) => {});
+const updatePostCtrl = expressAsyncHandler(async (req, res) => {
+  const { id } = req.params;
+  validateMongoId(id);
+  try {
+    const post = await Post.findByIdAndUpdate(
+      id,
+      {
+        ...req.body,
+      },
+      { new: true }
+    );
+
+    res.json(post);
+  } catch (error) {
+    res.json(error);
+  }
+});
+
 //delete a post
 const deletePostCtrl = expressAsyncHandler(async (req, res) => {
   const { id } = req.params;

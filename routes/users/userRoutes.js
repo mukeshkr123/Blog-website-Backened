@@ -20,9 +20,9 @@ const {
 } = require("../../controllers/users/userCtrl");
 const authMiddleware = require("../../middleware/auth/authMiddleware");
 const {
-  profilePhotoUpload,
+  PhotoUpload,
   profilePhotoResize,
-} = require("../../middleware/upload/profilePhotoUpload");
+} = require("../../middleware/upload/PhotoUpload");
 
 const userRoutes = express.Router();
 
@@ -42,7 +42,7 @@ userRoutes.post(
 userRoutes.post("/verify-account", authMiddleware, accountVerificationCtrl);
 userRoutes.put(
   "/profilephoto-upload",
-  profilePhotoUpload.single("image"),
+  PhotoUpload.single("image"),
   authMiddleware,
   profilePhotoResize,
   profilePhotoUploadCtrl

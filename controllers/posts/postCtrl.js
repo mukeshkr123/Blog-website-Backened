@@ -3,12 +3,13 @@ const Filter = require("bad-words");
 const Post = require("../../model/post/Post");
 const validateMongoId = require("../../utils/validateMongodbID");
 const User = require("../../model/user/User");
+const cloudinaryUploadImg = require("../../utils/cloudinary");
 
 // Create post
 const createPostCtrl = expressAsyncHandler(async (req, res) => {
   const { _id } = req.user;
   const { user, title, description } = req.body;
-  validateMongoId(user);
+  // validateMongoId(user);
   // Check for bad words
   const filter = new Filter();
   const isProfane = filter.isProfane(title) || filter.isProfane(description);
@@ -20,8 +21,18 @@ const createPostCtrl = expressAsyncHandler(async (req, res) => {
     );
   }
 
+  // 1. Get the path to the image
+  const localPath = `public/images/posts/${req.file.filename}`;
+
+  // 2. Upload to Cloudinary
+  const imgUploaded = await cloudinaryUploadImg(localPath);
+
   try {
-    const post = await Post.create({ user, title, description });
+    const post = await Post.create({
+      ...req.body,
+      image: imgUploaded?.url,
+      user: _id,
+    });
     res.json(post);
   } catch (error) {
     res.json(error);

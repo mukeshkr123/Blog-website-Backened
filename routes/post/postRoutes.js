@@ -5,6 +5,7 @@ const {
   fetchPostCtrl,
   deletePostCtrl,
   updatePostCtrl,
+  addLikeToPostCtrl,
 } = require("../../controllers/posts/postCtrl");
 const authMiddleware = require("../../middleware/auth/authMiddleware");
 const {
@@ -22,6 +23,7 @@ postRoute.post(
   createPostCtrl
 );
 
+postRoute.put("/likes", authMiddleware, addLikeToPostCtrl);
 postRoute.get("/", fetchAllPostsCtrl); // fetch all posts
 postRoute.get("/:id", fetchPostCtrl); // fetch a posts
 postRoute.delete("/:id", deletePostCtrl); // fetch a posts

@@ -25,6 +25,28 @@ const createCommentCtrl = expressAsyncHandler(async (req, res) => {
   }
 });
 
-// fetch all comments (You can implement this route handler here)
+// fetch all COMMENTS
+const fetchAllCommentsCtrl = expressAsyncHandler(async (req, res) => {
+  try {
+    const comments = await Comment.find();
+    res.json(comments);
+  } catch (error) {
+    res.json(500).json({ error: "Error fetching comments" });
+  }
+});
+// fetch a COMMENTS
+const fetchCommentCtrl = expressAsyncHandler(async (req, res) => {
+  const id = req.params.id;
+  try {
+    const comments = await Comment.findById(id);
+    res.json(comments);
+  } catch (error) {
+    res.json(500).json({ error: "Error fetching comments" });
+  }
+});
 
-module.exports = createCommentCtrl;
+module.exports = {
+  createCommentCtrl,
+  fetchAllCommentsCtrl,
+  fetchCommentCtrl,
+};

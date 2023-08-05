@@ -1,5 +1,6 @@
 const expressAsyncHandler = require("express-async-handler");
 const Comment = require("../../model/comment/Comment");
+const validateMongoId = require("../../utils/validateMongodbID");
 
 const createCommentCtrl = expressAsyncHandler(async (req, res) => {
   try {
@@ -49,10 +50,20 @@ const fetchCommentCtrl = expressAsyncHandler(async (req, res) => {
 
 const updateCommentCtrl = expressAsyncHandler(async (req, res) => {
   const id = req.params.id;
+  validateMongoId(id);
   try {
-    const updatedComment = await Comment.findByIdAndUpdate(id, {
-      description: req.body.description,
-    });
+    const updatedComment = await Comment.findByIdAndUpdate(
+      id,
+      {
+        post: req.body?.postId,
+        user: req?.user,
+        description: req?.body?.description,
+      },
+      {
+        new: true,
+        runValidators: true,
+      }
+    ).populate("user");
     res.json(updatedComment);
   } catch (error) {
     res.json(500).json({ error: "Error updating comments" });
@@ -62,9 +73,10 @@ const updateCommentCtrl = expressAsyncHandler(async (req, res) => {
 // delete a COMMENT
 const deleteCommentCtrl = expressAsyncHandler(async (req, res) => {
   const id = req.params.id;
+  validateMongoId(id);
   try {
-    const comments = await Comment.findByIdAndDelete(id);
-    res.json("Deleted comment successfully");
+    const comment = await Comment.findByIdAndDelete(id);
+    res.json(comment);
   } catch (error) {
     res.json(500).json({ error: "Error fetching comments" });
   }

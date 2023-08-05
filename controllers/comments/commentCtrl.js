@@ -34,7 +34,7 @@ const fetchAllCommentsCtrl = expressAsyncHandler(async (req, res) => {
     res.json(500).json({ error: "Error fetching comments" });
   }
 });
-// fetch a COMMENTS
+// fetch a COMMENT
 const fetchCommentCtrl = expressAsyncHandler(async (req, res) => {
   const id = req.params.id;
   try {
@@ -45,8 +45,35 @@ const fetchCommentCtrl = expressAsyncHandler(async (req, res) => {
   }
 });
 
+// update a comment
+
+const updateCommentCtrl = expressAsyncHandler(async (req, res) => {
+  const id = req.params.id;
+  try {
+    const updatedComment = await Comment.findByIdAndUpdate(id, {
+      description: req.body.description,
+    });
+    res.json(updatedComment);
+  } catch (error) {
+    res.json(500).json({ error: "Error updating comments" });
+  }
+});
+
+// delete a COMMENT
+const deleteCommentCtrl = expressAsyncHandler(async (req, res) => {
+  const id = req.params.id;
+  try {
+    const comments = await Comment.findByIdAndDelete(id);
+    res.json("Deleted comment successfully");
+  } catch (error) {
+    res.json(500).json({ error: "Error fetching comments" });
+  }
+});
+
 module.exports = {
   createCommentCtrl,
   fetchAllCommentsCtrl,
   fetchCommentCtrl,
+  deleteCommentCtrl,
+  updateCommentCtrl,
 };

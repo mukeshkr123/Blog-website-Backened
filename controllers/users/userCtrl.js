@@ -10,6 +10,7 @@ const validateMongoId = require("../../utils/validateMongodbID");
 const { response } = require("express");
 const cloudinaryUploadImg = require("../../utils/cloudinary");
 const fs = require("fs");
+const { log } = require("console");
 
 sgMail.setApiKey(process.env.SEND_GRID_API_KEY);
 
@@ -110,9 +111,27 @@ const fetchUserDetailsCtrl = expressAsyncHandler(async (req, res) => {
 const userProfileCtrl = expressAsyncHandler(async (req, res) => {
   const { id } = req.params;
   validateMongoId(id);
+  // find the login user
+  // check id the particular if the login user exists in the array of viewdBy
+  // get the login user details
+  const loginUserId = req?.user?._id?.toString();
+  console.log(typeof loginUserId);
   try {
-    const myProfile = await User.findById(id).populate("posts");
-    res.json(myProfile);
+    const myProfile = await User.findById(id)
+      .populate("posts")
+      .populate("viewedBy");
+    const alreadyViewd = myProfile?.viewedBy?.find((user) => {
+      return user?._id.toString() === loginUserId;
+    });
+
+    if (alreadyViewd) {
+      res.json(myProfile);
+    } else {
+      const profile = await User.findByIdAndUpdate(myProfile?.id, {
+        $push: { viewedBy: loginUserId },
+      });
+      res.json(profile);
+    }
   } catch (error) {
     res.json(error);
   }

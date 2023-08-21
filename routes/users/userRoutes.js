@@ -39,7 +39,7 @@ userRoutes.post(
   authMiddleware,
   generateVerificationTokenCtrl
 );
-userRoutes.post("/verify-account", authMiddleware, accountVerificationCtrl);
+userRoutes.put("/verify-account", authMiddleware, accountVerificationCtrl);
 userRoutes.put(
   "/profilephoto-upload",
   PhotoUpload.single("image"),

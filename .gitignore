@@ -3,7 +3,12 @@
 /.pnp
 .pnp.js
 /.env
+<<<<<<< HEAD
 .env
+=======
+
+
+>>>>>>> 9def79c4da802df8cc6f9625ed35215bc68f7153
 # testing
 /coverage
 

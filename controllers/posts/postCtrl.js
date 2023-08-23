@@ -5,10 +5,13 @@ const validateMongoId = require("../../utils/validateMongodbID");
 const User = require("../../model/user/User");
 const cloudinaryUploadImg = require("../../utils/cloudinary");
 const fs = require("fs");
+const { BlockUserFnction } = require("../../utils/isBlocked");
 
 // Create post
 const createPostCtrl = expressAsyncHandler(async (req, res) => {
   const { _id } = req.user;
+  //check the user if blocked
+  BlockUserFnction(req.user);
   const { user, title, description } = req.body;
   // validateMongoId(user);
   // Check for bad words

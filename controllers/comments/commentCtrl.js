@@ -1,10 +1,13 @@
 const expressAsyncHandler = require("express-async-handler");
 const Comment = require("../../model/comment/Comment");
 const validateMongoId = require("../../utils/validateMongodbID");
+const { BlockUserFnction } = require("../../utils/isBlocked");
 
 const createCommentCtrl = expressAsyncHandler(async (req, res) => {
   try {
     const { user, body } = req;
+    //check if user is blocked user
+    BlockUserFnction(user);
 
     // Validate the input data
     const { postId, description } = body;

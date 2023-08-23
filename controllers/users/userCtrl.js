@@ -11,6 +11,7 @@ const { response } = require("express");
 const cloudinaryUploadImg = require("../../utils/cloudinary");
 const fs = require("fs");
 const { log } = require("console");
+const { BlockUserFnction } = require("../../utils/isBlocked");
 
 sgMail.setApiKey(process.env.SEND_GRID_API_KEY);
 
@@ -142,6 +143,8 @@ const userProfileCtrl = expressAsyncHandler(async (req, res) => {
 //------------------------------
 const updateUserCtrl = expressAsyncHandler(async (req, res) => {
   const { _id } = req?.user;
+  //block user
+  BlockUserFnction(req.user);
   console.log(req.user);
   validateMongoId(_id);
   const user = await User.findByIdAndUpdate(
@@ -421,6 +424,8 @@ const passwordResetCtrl = expressAsyncHandler(async (req, res) => {
 //----------------------------------------------------------------
 
 const profilePhotoUploadCtrl = expressAsyncHandler(async (req, res) => {
+  // block user
+  BlockUserFnction(req.user);
   try {
     //find the login user
     const { _id } = req.user;
